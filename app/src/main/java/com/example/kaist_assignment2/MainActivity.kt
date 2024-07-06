@@ -39,16 +39,16 @@ class MainActivity : AppCompatActivity() {
         // 사용자 데이터가 존재하는지 확인하는 메소드 호출
         if (!userId.isNullOrBlank()) {
             checkUserExistence(apiService, userId, userName)
-            fetchSongData(apiService, "test_id", "test_song")
-            fetchAllSongsData(apiService, "test_id")
+//            fetchSongData(apiService, "test_id", "test_song")
+//            fetchAllSongsData(apiService, "test_id")
 //            insertSongData(apiService, "test_id", "test_song2", 7)
 //            deleteSongData(apiService, "test_id", "test_song2")
-            updateSongData(apiService, "test_id", "test_song2", 100)
+//            updateSongData(apiService, "test_id", "test_song2", 100)
         }
 
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tab_layout)
-        adapter = ViewPagerAdapter(this, userName)
+        adapter = ViewPagerAdapter(this, userName, userId)
 
         viewPager.adapter = adapter
 
@@ -57,7 +57,7 @@ class MainActivity : AppCompatActivity() {
         }.attach()
     }
 
-    private inner class ViewPagerAdapter(activity: AppCompatActivity, private val userName: String?) :
+    private inner class ViewPagerAdapter(activity: AppCompatActivity, private val userName: String?, private val userId: String?) :
         FragmentStateAdapter(activity) {
 
         override fun getItemCount(): Int {
@@ -66,8 +66,8 @@ class MainActivity : AppCompatActivity() {
 
         override fun createFragment(position: Int): Fragment {
             return when (position) {
-                0 -> UserFragment.newInstance(userName)
-                1 -> UserFragment.newInstance(userName)
+                0 -> UserFragment.newInstance(userName, userId)
+                1 -> UserFragment.newInstance(userName, userId)
                 2 -> CalendarFragment.newInstance()
                 else -> throw IllegalStateException("Unexpected position $position")
             }
