@@ -10,14 +10,19 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.kaist_assignment2.retrofit.ApiService
 import com.example.kaist_assignment2.retrofit.RetrofitClient
 import com.example.kaist_assignment2.retrofit.User
+import com.example.kaist_assignment2.retrofit.UserSleepData
 import com.example.kaist_assignment2.retrofit.UserSongsData
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.Date
+
 
 class MainActivity : AppCompatActivity() {
 
@@ -39,7 +44,6 @@ class MainActivity : AppCompatActivity() {
         // 사용자 데이터가 존재하는지 확인하는 메소드 호출
         if (!userId.isNullOrBlank()) {
             checkUserExistence(apiService, userId, userName)
-            fetchSongData(apiService, "test_id", "test_song")
         }
 
         viewPager = findViewById(R.id.view_pager)

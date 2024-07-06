@@ -16,18 +16,26 @@ interface ApiService {
     @POST("/users") // users end point 에 POST 요청을 보냄 (userId, userName)
     fun postUser(@Body user: User): Call<User>
 
-//    // sleepdata 관련 메소드
-//    @GET("/sleepdata")
-//    getSleepData() 해당하는 SleepData response
-//
-//    @GET("/sleepdata/id")
-//    getSleepDataByID() 해당하는 모든 (user_id) response
-//
-//    @POST("/sleepdata")
-//    postSleepData() request의 해당하는 (user_id, date) INSERT
-//
-//    @POST("/sleepdata/delete")
+    // sleepdata 관련 메소드
+    @GET("/sleepdata/{user_id}")
+    fun getSleepData(
+        @Path("user_id") userId: String,
+        @Query("date") date: String
+    ): Call<UserSleepData>
+
+//    해당하는 모든 (user_id) response
+    @GET("/sleepdata/id/{user_id}")
+    fun getSleepDataByID(
+        @Path("user_id") userId: String,
+    ): Call<List<UserSleepData>>
+
+//    request의 해당하는 (user_id, date) INSERT
+    @POST("/sleepdata")
+    fun postSleepData(@Body user: UserSleepData): Call<UserSleepData>
+
+    @POST("/sleepdata/delete")
 //    deleteSleepData() request의 해당하는 (user_id, date) DELETE
+    fun deleteSleepData(@Body user: UserSleepData): Call<UserSleepData>
 
 
 //    // songdata 관련 메소드
