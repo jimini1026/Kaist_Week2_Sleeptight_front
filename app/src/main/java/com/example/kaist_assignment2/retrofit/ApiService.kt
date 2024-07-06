@@ -35,15 +35,22 @@ interface ApiService {
     fun getSongsData(@Query("user_id") userId: String, @Query("song") song: String): Call<List<UserSongsData>>
 //    getSongsData() 해당하는 SongsData response
 //
-//    @GET("/songsdata/id")
+    @GET("/songsdata/id")
+    fun getSongsDataByID(@Query("user_id") userId: String): Call<List<UserSongsData>>
+
 //    getSongsDataByID() 해당하는 모든 (user_id) response
 //
-//    @POST("/songsdata")
+    @POST("/songsdata")
+    fun postSongsData(@Body userSongsData: UserSongsData): Call<Void>
+
 //    postSongsData() request의 해당하는 (user_id, song) INSERT
 //
-//    @POST("/songsdata/delete")
+    @POST("/songsdata/delete")
+    fun deleteSongsData(@Body userSongsData: UserSongsData): Call<Void>
 //    deleteSongsData() request의 해당하는 (user_id, song) DELETE
 //
-//    @POST("/songsdata/update")
+    @POST("/songsdata/update")
+    fun updateSongsData(@Body userSongsData: UserSongsData): Call<Void>
+
 //    updateSongsData() request의 해당하는 (user_id, song) UPDATE
 }
