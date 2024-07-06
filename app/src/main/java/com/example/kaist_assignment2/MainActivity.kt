@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
         override fun createFragment(position: Int): Fragment {
             return when (position) {
                 0 -> UserFragment.newInstance(userName, userId)
-                1 -> UserFragment.newInstance(userName, userId)
+                1 -> MusicFragment.newInstance()
                 2 -> CalendarFragment.newInstance()
                 else -> throw IllegalStateException("Unexpected position $position")
             }
