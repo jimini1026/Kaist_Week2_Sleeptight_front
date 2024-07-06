@@ -1,6 +1,8 @@
 package com.example.kaist_assignment2.retrofit
 
+import com.google.gson.annotations.SerializedName
+
 data class User(
-    val user_id : String,
-    val user_name : String
+    @SerializedName("user_id") val userId: String,
+    @SerializedName("user_name") val userName: String
 )
