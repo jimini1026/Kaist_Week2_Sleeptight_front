@@ -8,7 +8,9 @@ import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
 import com.example.kaist_assignment2.retrofit.ApiService
+import com.example.kaist_assignment2.retrofit.RetrofitClient
 import com.example.kaist_assignment2.retrofit.User
+import com.example.kaist_assignment2.retrofit.UserSongsData
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
 import retrofit2.Call
@@ -27,22 +29,17 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        // Retrofit 객체 생성
-        val retrofit = Retrofit.Builder()
-            .baseUrl("http://172.10.7.133") // 서버의 기본 URL
-            .addConverterFactory(GsonConverterFactory.create()) // Gson 변환기 사용
-            .build()
-
         // intent로 userinfo 받아오기
         val userId = intent.getStringExtra("USER_ID")
         val userName = intent.getStringExtra("USER_NAME")
 
         // Retrofit 인터페이스 구현체 생성
-        val apiService = retrofit.create(ApiService::class.java)
+        val apiService = RetrofitClient.apiService
 
         // 사용자 데이터가 존재하는지 확인하는 메소드 호출
         if (!userId.isNullOrBlank()) {
             checkUserExistence(apiService, userId, userName)
+            fetchSongData(apiService, "test_id", "test_song")
         }
 
         viewPager = findViewById(R.id.view_pager)
@@ -126,6 +123,34 @@ class MainActivity : AppCompatActivity() {
 
             override fun onFailure(call: Call<User>, t: Throwable) {
                 Log.e("MainActivity", "Failed to send POST request: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // song 데이터를 서버에서 가져오는 함수
+    private fun fetchSongData(apiService: ApiService, userId: String, song: String) {
+        val call = apiService.getSongsData(userId, song)
+
+        call.enqueue(object : Callback<List<UserSongsData>> {
+            override fun onResponse(call: Call<List<UserSongsData>>, response: Response<List<UserSongsData>>) {
+                if (response.isSuccessful) {
+                    val songData = response.body()
+                    if (songData != null) {
+                        // songData 사용
+                        Toast.makeText(this@MainActivity, "Song data fetched successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@MainActivity, "No song data found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MainActivity", "Error response: $errorBody")
+                    Toast.makeText(this@MainActivity, "Failed to fetch song data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserSongsData>>, t: Throwable) {
+                Log.e("MainActivity", "Failed to send GET request: ${t.message}")
                 Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
             }
         })
