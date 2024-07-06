@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:gravity="center"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/mainTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Alarm Activity: wakeup!"
+        android:textSize="24sp"
+        android:textStyle="bold" />
+
+    <Button
+        android:id="@+id/wakeUpButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="지금 일어날게요"
+        android:layout_marginTop="16dp"
+        android:onClick="onWakeUpClicked" />
+
+    <Button
+        android:id="@+id/sleepFiveMoreButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="5분만 더 잘래요"
+        android:layout_marginTop="16dp"
+        android:onClick="onSleepFiveMoreClicked" />
+
+</LinearLayout>
