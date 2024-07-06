@@ -5,6 +5,7 @@ import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
+import retrofit2.http.Query
 
 interface ApiService {
 
@@ -30,7 +31,8 @@ interface ApiService {
 
 
 //    // songdata 관련 메소드
-//    @GET("/songsdata")
+    @GET("/songsdata")
+    fun getSongsData(@Query("user_id") userId: String, @Query("song") song: String): Call<List<UserSongsData>>
 //    getSongsData() 해당하는 SongsData response
 //
 //    @GET("/songsdata/id")
