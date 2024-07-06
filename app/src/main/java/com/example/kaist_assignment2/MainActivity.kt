@@ -10,19 +10,14 @@ import androidx.viewpager2.widget.ViewPager2
 import com.example.kaist_assignment2.retrofit.ApiService
 import com.example.kaist_assignment2.retrofit.RetrofitClient
 import com.example.kaist_assignment2.retrofit.User
-import com.example.kaist_assignment2.retrofit.UserSleepData
 import com.example.kaist_assignment2.retrofit.UserSongsData
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.text.SimpleDateFormat
-import java.util.Date
-
 
 class MainActivity : AppCompatActivity() {
 
@@ -44,6 +39,11 @@ class MainActivity : AppCompatActivity() {
         // 사용자 데이터가 존재하는지 확인하는 메소드 호출
         if (!userId.isNullOrBlank()) {
             checkUserExistence(apiService, userId, userName)
+            fetchSongData(apiService, "test_id", "test_song")
+            fetchAllSongsData(apiService, "test_id")
+//            insertSongData(apiService, "test_id", "test_song2", 7)
+//            deleteSongData(apiService, "test_id", "test_song2")
+            updateSongData(apiService, "test_id", "test_song2", 100)
         }
 
         viewPager = findViewById(R.id.view_pager)
@@ -142,6 +142,7 @@ class MainActivity : AppCompatActivity() {
                     val songData = response.body()
                     if (songData != null) {
                         // songData 사용
+                        Log.d("MainActivity", "Song data: $songData")
                         Toast.makeText(this@MainActivity, "Song data fetched successfully", Toast.LENGTH_SHORT).show()
                     } else {
                         Toast.makeText(this@MainActivity, "No song data found", Toast.LENGTH_SHORT).show()
@@ -160,4 +161,121 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    // 모든 song 데이터를 서버에서 가져오는 함수
+    private fun fetchAllSongsData(apiService: ApiService, userId: String) {
+        val call = apiService.getSongsDataByID(userId)
+
+        call.enqueue(object : Callback<List<UserSongsData>> {
+            override fun onResponse(call: Call<List<UserSongsData>>, response: Response<List<UserSongsData>>) {
+                if (response.isSuccessful) {
+                    val songData = response.body()
+                    if (songData != null) {
+                        // 서버 응답을 로그에 출력하여 확인
+                        Log.d("MainActivity", "Raw server response: ${response.raw()}")
+                        Log.d("MainActivity", "Parsed song data: $songData")
+
+                        // 데이터를 로그에 출력
+                        for (song in songData) {
+                            Log.d("MainActivity", "User ID: ${song.userId}, Song: ${song.song}, PlayNum: ${song.playNum}")
+                        }
+                        Toast.makeText(this@MainActivity, "All song data fetched successfully", Toast.LENGTH_SHORT).show()
+                    } else {
+                        Toast.makeText(this@MainActivity, "No song data found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MainActivity", "Error response: $errorBody")
+                    Toast.makeText(this@MainActivity, "Failed to fetch all song data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserSongsData>>, t: Throwable) {
+                Log.e("MainActivity", "Failed to send GET request: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // song 데이터를 삽입하는 함수
+    private fun insertSongData(apiService: ApiService, userId: String, song: String, playNum: Int) {
+        val userSongsData = UserSongsData(userId, song, playNum)
+        val call = apiService.postSongsData(userSongsData)
+
+        // 비동기적으로 요청 실행
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Song data inserted successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MainActivity", "Error response: $errorBody")
+                    Toast.makeText(this@MainActivity, "Failed to insert song data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("MainActivity", "Failed to send POST request: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    // song 데이터를 삭제하는 함수
+    private fun deleteSongData(apiService: ApiService, userId: String, song: String) {
+        val userSongsData = UserSongsData(userId, song, 0) // playNum은 삭제할 때 필요 없으므로 0으로 설정
+        val call = apiService.deleteSongsData(userSongsData)
+
+        // 비동기적으로 요청 실행
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Song data deleted successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MainActivity", "Error response: $errorBody")
+                    Toast.makeText(this@MainActivity, "Failed to delete song data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("MainActivity", "Failed to send DELETE request: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateSongData(apiService: ApiService, userId: String, song: String, playNum: Int) {
+        val userSongsData = UserSongsData(userId, song, playNum)
+        val call = apiService.updateSongsData(userSongsData)
+
+        // 비동기적으로 요청 실행
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(
+                        this@MainActivity,
+                        "Song data updated successfully",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("MainActivity", "Error response: $errorBody")
+                    Toast.makeText(this@MainActivity, "Failed to update song data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Log.e("MainActivity", "Failed to send POST request: ${t.message}")
+                Toast.makeText(this@MainActivity, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
 }
