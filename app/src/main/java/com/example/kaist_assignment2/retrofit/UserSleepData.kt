@@ -7,7 +7,7 @@ import java.util.*
 data class UserSleepData(
     @SerializedName("user_id") val userId: String,
     @SerializedName("date") val date: Date,
-    @SerializedName("sleeptime") val sleepTime: Time,
-    @SerializedName("predwaketime") val predWakeTime: Time,
-    @SerializedName("realwaketime") val realWakeTime: Time
+    @SerializedName("sleeptime") val sleepTime: String,
+    @SerializedName("pred_waketime") val predWakeTime: String,
+    @SerializedName("real_waketime") val realWakeTime: String
 )
