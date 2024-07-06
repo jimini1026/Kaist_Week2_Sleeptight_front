@@ -67,7 +67,7 @@ class MainActivity : AppCompatActivity() {
             return when (position) {
                 0 -> UserFragment.newInstance(userName)
                 1 -> UserFragment.newInstance(userName)
-                2 -> UserFragment.newInstance(userName)
+                2 -> CalendarFragment.newInstance()
                 else -> throw IllegalStateException("Unexpected position $position")
             }
         }
