@@ -24,13 +24,7 @@
             android:name=".MainActivity"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.Kaist_Assignment2">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
+            android:theme="@style/Theme.Kaist_Assignment2" />
 
         <!-- 카카오 로그인, 인가코드를 받기 위한 액티비티 -->
         <activity android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
@@ -49,6 +43,13 @@
         <activity
             android:name=".AuthCodeHandlerActivity"
             android:exported="true" />
+
+        <activity android:name=".LoginActivity" android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
