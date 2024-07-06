@@ -1,0 +1,28 @@
+<!-- res/layout/modal_dialog_layout.xml -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/messageTextView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="일어나셨나요? 10분만 더 자고 싶으세요?" />
+
+    <Button
+        android:id="@+id/wakeUpButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="일어났어요!"
+        android:onClick="onWakeUpClicked" />
+
+    <Button
+        android:id="@+id/snoozeButton"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="10분 더 자고 싶어요"
+        android:onClick="onSnoozeClicked" />
+
+</LinearLayout>

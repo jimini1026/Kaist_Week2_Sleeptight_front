@@ -149,16 +149,6 @@ class UserFragment : Fragment() {
         }
     }
 
-//    private fun confirmSelectedTimes() {
-//        if (selectedTextView == null) {
-//            Toast.makeText(requireContext(), "Please select a time", Toast.LENGTH_SHORT).show()
-//        } else {
-//            val selectedTime = selectedTextView!!.text.toString()
-//            Toast.makeText(requireContext(), "Selected Time: $selectedTime", Toast.LENGTH_SHORT).show()
-//
-//
-//        }
-//    }
 private fun confirmSelectedTimes() {
     if (selectedTextView == null) {
         Toast.makeText(requireContext(), "Please select a time", Toast.LENGTH_SHORT).show()
