@@ -20,6 +20,12 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.kaist_assignment2.retrofit.ApiService
+import com.example.kaist_assignment2.retrofit.RetrofitClient
+import com.example.kaist_assignment2.retrofit.UserSongsData
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
@@ -28,15 +34,23 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     private lateinit var handler: Handler
     private lateinit var runnable: Runnable
     private var mediaPlayer: MediaPlayer? = null
-
+    private val selectedSongs = mutableListOf<Song>()
+    private lateinit var songsAdapter: SongsAdapter
 
     companion object {
-        fun newInstance(): MusicFragment {
-            return MusicFragment()
+        private const val ARG_USER_NAME = "user_name"
+        private const val ARG_USER_ID = "user_id"
+
+        fun newInstance(userName: String?, userId: String?): MusicFragment {
+            val fragment = MusicFragment()
+            val args = Bundle()
+            args.putString(ARG_USER_NAME, userName)
+            args.putString(ARG_USER_ID, userId)
+            fragment.arguments = args
+            return fragment
+
         }
     }
-
-    private val selectedSongs = mutableListOf<Song>()
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -53,6 +67,10 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     ): View? {
         // fragment_music 레이아웃 파일을 인플레이트합니다.
         val view = inflater.inflate(R.layout.fragment_music, container, false)
+
+        val userName = arguments?.getString(ARG_USER_NAME)
+        val userId = arguments?.getString(ARG_USER_ID)
+        Toast.makeText(context, "Username: $userName, UserID: $userId", Toast.LENGTH_LONG).show()
 
         // 권한 확인
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_AUDIO)
@@ -83,6 +101,14 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             playbackDurationInMillis = (minutes * 60 + seconds) * 1000
             startTimer(minutePicker, secondPicker)
             playSelectedSongs()
+
+            userId?.let { id ->
+                saveSelectedSongsToDatabase(id)
+            }
+
+            // 선택된 항목 초기화
+            songsAdapter.clearSelection()
+            selectedSongs.clear()
         }
 
         handler = Handler(Looper.getMainLooper())
@@ -108,7 +134,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     private fun playNextSongWithTimer(mediaPlayer: MediaPlayer, index: Int, remainingTime: Int) {
         if (index >= selectedSongs.size || remainingTime <= 0) {
             stopPlayback()
-//            mediaPlayer.release()
             Toast.makeText(context, "Playback time is over", Toast.LENGTH_SHORT).show()
             return
         }
@@ -122,7 +147,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         val songDuration = mediaPlayer.duration
         val playTime = if (remainingTime < songDuration) remainingTime else songDuration
 
-//        val handler = Handler(Looper.getMainLooper())
         handler.postDelayed({
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
@@ -162,7 +186,8 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         // RecyclerView 설정
         val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
         recyclerView.layoutManager = LinearLayoutManager(context)
-        recyclerView.adapter = SongsAdapter(getSongsFromDevice(), this)
+        songsAdapter = SongsAdapter(getSongsFromDevice(), this)
+        recyclerView.adapter = songsAdapter
     }
 
     private fun getSongsFromDevice(): List<Song> {
@@ -211,5 +236,68 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             selectedSongs.add(song)
             Toast.makeText(context, "${song.title} added to playlist", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun saveSelectedSongsToDatabase(userId: String) {
+        val apiService = RetrofitClient.apiService
+
+        for (song in selectedSongs) {
+            val call = apiService.getSongsData(userId, song.title)
+            call.enqueue(object : Callback<List<UserSongsData>> {
+                override fun onResponse(call: Call<List<UserSongsData>>, response: Response<List<UserSongsData>>) {
+                    if (response.isSuccessful) {
+                        val songData = response.body()
+                        if (!songData.isNullOrEmpty()) {
+                            val existingSongData = songData[0]
+                            updateSongData(apiService, userId, existingSongData.song, existingSongData.playNum + 1)
+                        } else {
+                            insertSongData(apiService, userId, song.title)
+                        }
+                    } else {
+                        Toast.makeText(context, "Failed to check song existence", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+                override fun onFailure(call: Call<List<UserSongsData>>, t: Throwable) {
+                    Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                }
+            })
+        }
+    }
+
+    private fun insertSongData(apiService: ApiService, userId: String, song: String) {
+        val userSongsData = UserSongsData(userId, song, 1)
+        val call = apiService.postSongsData(userSongsData)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "$song saved to database", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to save $song to database", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun updateSongData(apiService: ApiService, userId: String, song: String, playNum: Int) {
+        val userSongsData = UserSongsData(userId, song, playNum)
+        val call = apiService.updateSongsData(userSongsData)
+        call.enqueue(object : Callback<Void> {
+            override fun onResponse(call: Call<Void>, response: Response<Void>) {
+                if (response.isSuccessful) {
+                    Toast.makeText(context, "$song updated in database", Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(context, "Failed to update $song in database", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<Void>, t: Throwable) {
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
     }
 }
