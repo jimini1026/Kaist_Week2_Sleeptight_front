@@ -4,11 +4,15 @@ package com.example.kaist_assignment2
 import android.Manifest
 import android.content.pm.PackageManager
 import android.media.MediaPlayer
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.NumberPicker
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
@@ -20,12 +24,19 @@ import androidx.recyclerview.widget.RecyclerView
 class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
     private val REQUEST_CODE_READ_MEDIA_AUDIO = 1
+    private var playbackDurationInMillis: Int = 0
+    private lateinit var handler: Handler
+    private lateinit var runnable: Runnable
+    private var mediaPlayer: MediaPlayer? = null
+
 
     companion object {
         fun newInstance(): MusicFragment {
             return MusicFragment()
         }
     }
+
+    private val selectedSongs = mutableListOf<Song>()
 
     private val requestPermissionLauncher =
         registerForActivityResult(ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -40,12 +51,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
-//        // RecyclerView 설정
-//        val recyclerView: RecyclerView = view.findViewById(R.id.recycler_view)
-//        recyclerView.layoutManager = LinearLayoutManager(context)
-//        recyclerView.adapter = SongsAdapter(getSampleSongs(), this)
-
         // fragment_music 레이아웃 파일을 인플레이트합니다.
         val view = inflater.inflate(R.layout.fragment_music, container, false)
 
@@ -71,7 +76,85 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         minutePicker.value = 0
         secondPicker.value = 0
 
+        val saveButton: Button = view.findViewById(R.id.save_button)
+        saveButton.setOnClickListener {
+            val minutes = minutePicker.value
+            val seconds = secondPicker.value
+            playbackDurationInMillis = (minutes * 60 + seconds) * 1000
+            startTimer(minutePicker, secondPicker)
+            playSelectedSongs()
+        }
+
+        handler = Handler(Looper.getMainLooper())
+
         return view
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        stopPlayback()
+    }
+
+    private fun playSelectedSongs() {
+        if (selectedSongs.isEmpty()) {
+            Toast.makeText(context, "No songs selected", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val mediaPlayer = MediaPlayer()
+        playNextSongWithTimer(mediaPlayer, 0, playbackDurationInMillis)
+    }
+
+    private fun playNextSongWithTimer(mediaPlayer: MediaPlayer, index: Int, remainingTime: Int) {
+        if (index >= selectedSongs.size || remainingTime <= 0) {
+            stopPlayback()
+//            mediaPlayer.release()
+            Toast.makeText(context, "Playback time is over", Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        val song = selectedSongs[index]
+        mediaPlayer.reset()
+        mediaPlayer.setDataSource(song.filePath)
+        mediaPlayer.prepare()
+        mediaPlayer.start()
+
+        val songDuration = mediaPlayer.duration
+        val playTime = if (remainingTime < songDuration) remainingTime else songDuration
+
+//        val handler = Handler(Looper.getMainLooper())
+        handler.postDelayed({
+            if (mediaPlayer.isPlaying) {
+                mediaPlayer.stop()
+            }
+            playNextSongWithTimer(mediaPlayer, index + 1, remainingTime - playTime)
+        }, playTime.toLong())
+    }
+
+    private fun startTimer(minutePicker: NumberPicker, secondPicker: NumberPicker) {
+        runnable = object : Runnable {
+            override fun run() {
+                val totalSeconds = minutePicker.value * 60 + secondPicker.value
+                if (totalSeconds > 0) {
+                    val newTotalSeconds = totalSeconds - 1
+                    val minutes = newTotalSeconds / 60
+                    val seconds = newTotalSeconds % 60
+                    minutePicker.value = minutes
+                    secondPicker.value = seconds
+                    handler.postDelayed(this, 1000)
+                } else {
+                    stopPlayback()
+                    Toast.makeText(context, "Playback time is over", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+        handler.post(runnable)
+    }
+
+    private fun stopPlayback() {
+        mediaPlayer?.release()
+        mediaPlayer = null
+        handler.removeCallbacks(runnable)
     }
 
     private fun setupRecyclerView(view: View?) {
@@ -85,9 +168,10 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     private fun getSongsFromDevice(): List<Song> {
         val songs = mutableListOf<Song>()
         val projection = arrayOf(
-                MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.TITLE,
             MediaStore.Audio.Media.ARTIST,
-            MediaStore.Audio.Media.DATA
+            MediaStore.Audio.Media.DATA,
+            MediaStore.Audio.Media.ALBUM_ID
         )
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
         val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
@@ -104,12 +188,15 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             val titleColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.TITLE)
             val artistColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ARTIST)
             val dataColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.DATA)
+            val albumIdColumn = it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID)
 
             while (it.moveToNext()) {
                 val title = it.getString(titleColumn)
                 val artist = it.getString(artistColumn)
                 val path = it.getString(dataColumn)
-                songs.add(Song(title, artist, R.drawable.album_art_1, path))
+                val albumId = it.getLong(albumIdColumn)
+                val albumArtUri = Uri.parse("content://media/external/audio/albumart/$albumId")
+                songs.add(Song(title, artist, albumArtUri.toString(), path))
             }
         }
 
@@ -117,33 +204,12 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     }
 
     override fun onItemClick(song: Song) {
-        Toast.makeText(context, "Clicked: ${song.title} by ${song.artist}", Toast.LENGTH_SHORT).show()
-        // 재생할 파일을 준비한다.
-        val mediaPlayer = MediaPlayer()
-        mediaPlayer.setDataSource(song.filePath)
-        mediaPlayer.prepare()
-        mediaPlayer.start()
+        if (selectedSongs.contains(song)) {
+            selectedSongs.remove(song)
+            Toast.makeText(context, "${song.title} removed from playlist", Toast.LENGTH_SHORT).show()
+        } else {
+            selectedSongs.add(song)
+            Toast.makeText(context, "${song.title} added to playlist", Toast.LENGTH_SHORT).show()
+        }
     }
-
-    // 샘플 데이터 생성
-//    private fun getSampleSongs(): List<Song> {
-//        return listOf(
-//            Song("Song Title 1", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 2", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 3", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 4", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 5", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 6", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 7", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 8", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 9", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 10", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 11", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 12", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 13", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 14", "Artist 2", R.drawable.album_art_2),
-//            Song("Song Title 15", "Artist 1", R.drawable.album_art_1),
-//            Song("Song Title 16", "Artist 2", R.drawable.album_art_2),
-//        )
-//    }
 }
