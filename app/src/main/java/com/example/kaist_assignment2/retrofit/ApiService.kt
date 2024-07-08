@@ -31,11 +31,11 @@ interface ApiService {
 
 //    request의 해당하는 (user_id, date) INSERT
     @POST("/sleepdata")
-    fun postSleepData(@Body user: UserSleepData): Call<UserSleepData>
+    fun postSleepData(@Body user: UserSleepData): Call<Void>
 
     @POST("/sleepdata/delete")
 //    deleteSleepData() request의 해당하는 (user_id, date) DELETE
-    fun deleteSleepData(@Body user: UserSleepData): Call<UserSleepData>
+    fun deleteSleepData(@Body user: UserSleepData): Call<Void>
 
 
 //    // songdata 관련 메소드

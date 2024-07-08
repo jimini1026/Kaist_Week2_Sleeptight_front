@@ -1,4 +1,3 @@
-// AlarmReceiver.kt
 package com.example.kaist_assignment2
 
 import android.app.NotificationChannel
@@ -13,10 +12,16 @@ import androidx.core.app.NotificationCompat
 class AlarmReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
-        showNotification(context, "일어나세요!!!")
+        val userId = intent.getStringExtra("userId")
+        val currentDate = intent.getStringExtra("currentDate")
+        val sleepTime = intent.getStringExtra("sleepTime")
+        val selectedHour = intent.getIntExtra("selectedHour", -1)
+        val selectedMinute = intent.getIntExtra("selectedMinute", -1)
+
+        showNotification(context, "일어나세요!!!", userId, currentDate, sleepTime, selectedHour, selectedMinute)
     }
 
-    private fun showNotification(context: Context, message: String) {
+    private fun showNotification(context: Context, message: String, userId: String?, currentDate: String?, sleepTime: String?, selectedHour: Int, selectedMinute: Int) {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         // Notification Channel 생성 (Android 8.0 이상에서 필요)
@@ -28,7 +33,13 @@ class AlarmReceiver : BroadcastReceiver() {
         }
 
         // 알림을 클릭했을 때 이동할 액티비티 설정
-        val intent = Intent(context, AlarmActivity::class.java)
+        val intent = Intent(context, AlarmActivity::class.java).apply {
+            putExtra("userId", userId)
+            putExtra("currentDate", currentDate)
+            putExtra("sleepTime", sleepTime)
+            putExtra("selectedHour", selectedHour)
+            putExtra("selectedMinute", selectedMinute)
+        }
         intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
         val pendingIntent = PendingIntent.getActivity(
             context,
