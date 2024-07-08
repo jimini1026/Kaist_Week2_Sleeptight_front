@@ -63,6 +63,11 @@
         <activity android:name=".AlarmActivity"
             android:label="Alarm Activity" />
 
+        <activity
+            android:name=".InternalLoginActivity"
+            android:label="Internal Login Activity">
+        </activity>
+
         <receiver android:name=".AlarmReceiver" />
     </application>
 

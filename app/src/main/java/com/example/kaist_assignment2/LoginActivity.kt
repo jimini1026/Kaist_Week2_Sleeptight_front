@@ -24,6 +24,13 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, AuthCodeHandlerActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_AUTH)
         }
+
+        val internalLoginButton: Button = findViewById(R.id.internal_login_button)
+
+        internalLoginButton.setOnClickListener {
+            val intent = Intent(this, InternalLoginActivity::class.java)
+            startActivityForResult(intent, REQUEST_CODE_AUTH)
+        }
     }
 
     // 다른 액티비티에서 돌아온 결과를 처리
