@@ -56,7 +56,17 @@ class MainActivity : AppCompatActivity() {
         viewPager.adapter = adapter
 
         TabLayoutMediator(tabLayout, viewPager) { tab, position ->
-            tab.text = "Tab ${(position + 1)}"
+            when (position) {
+                0 -> {
+                    tab.text = "Alarm"
+                }
+                1 -> {
+                    tab.text = "Songs"
+                }
+                2 -> {
+                    tab.text = "History"
+                }
+            }
         }.attach()
     }
 
