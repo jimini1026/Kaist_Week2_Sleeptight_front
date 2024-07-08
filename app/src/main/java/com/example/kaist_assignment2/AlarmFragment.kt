@@ -14,7 +14,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.AlarmManagerCompat
 import androidx.fragment.app.Fragment
-import com.example.kaist_assignment2.MusicFragment.Companion
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -49,7 +48,7 @@ class UserFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.fragment_user, container, false)
+        val view = inflater.inflate(R.layout.fragment_alarm, container, false)
 
         timeTextView = view.findViewById(R.id.timeTextView)
         val setTimeButton: Button = view.findViewById(R.id.setTimeButton)
