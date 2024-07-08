@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.kaist_assignment2.retrofit.ApiService
 import com.example.kaist_assignment2.retrofit.RetrofitClient
+import com.example.kaist_assignment2.retrofit.RetrofitClient.apiService
 import com.example.kaist_assignment2.retrofit.UserSleepData
 import com.example.kaist_assignment2.retrofit.UserSongsData
 import com.prolificinteractive.materialcalendarview.CalendarDay
@@ -32,6 +33,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
 import java.util.Locale
 import kotlin.math.log
 
@@ -79,6 +81,44 @@ class CalendarFragment : Fragment() {
 
         calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator, eventDecorator)
 
+        calendarView.setOnDateChangedListener { widget, date, selected ->
+            val selectedDate = String.format("%04d-%02d-%02d", date.year, date.month + 1, date.day)
+
+            if (!userId.isNullOrEmpty()) {
+                val call = apiService.getSleepData(userId, selectedDate)
+                call.enqueue(object : Callback<UserSleepData> {
+                    override fun onResponse(call: Call<UserSleepData>, response: Response<UserSleepData>) {
+                        if (response.isSuccessful) {
+                            val sleepData = response.body()
+                            if (sleepData != null) {
+                                val sleepTime = extractTimeFromDateTime(sleepData.sleepTime)
+                                val predWakeTime = extractTimeFromDateTime(sleepData.predWakeTime)
+                                val realWakeTime = extractTimeFromDateTime(sleepData.realWakeTime)
+                                // 예: Toast로 확인
+                                Toast.makeText(context, "Sleep Time: $sleepTime, Predicted Wake Time: $predWakeTime, Real Wake Time: $realWakeTime", Toast.LENGTH_LONG).show()
+
+                                // DialogFragment를 띄웁니다.
+                                val info = "Slept At $sleepTime\nSet Alarm At $predWakeTime\nWoke Up At $realWakeTime" // 실제 정보로 대체하세요.
+                                val dialogFragment = DateInfoDialogFragment.newInstance(selectedDate, info)
+                                dialogFragment.show(parentFragmentManager, "dateInfoDialog")
+                            } else {
+                                Toast.makeText(context, "No sleep data found", Toast.LENGTH_SHORT).show()
+                            }
+                        } else {
+                            val errorBody = response.errorBody()?.string()
+                            Log.e("CalendarFragment", "Error response: $errorBody")
+                            Toast.makeText(context, "Failed to fetch sleep data", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+
+                    override fun onFailure(call: Call<UserSleepData>, t: Throwable) {
+                        Log.e("CalendarFragment", "Failed to send GET request: ${t.message}")
+                        Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    }
+                })
+            }
+        }
+
         userId?.let {
             fetchTopSongsData(RetrofitClient.apiService, it)
             fetchSleepData(RetrofitClient.apiService, it)
@@ -91,6 +131,14 @@ class CalendarFragment : Fragment() {
         }
 
         return view
+    }
+
+    fun extractTimeFromDateTime(dateTime: String): String {
+        val inputFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        val outputFormat = SimpleDateFormat("HH:mm", Locale.getDefault())
+
+        val date = inputFormat.parse(dateTime)
+        return outputFormat.format(date)
     }
 
     inner class ToDayDecorator(context: Context) : DayViewDecorator {
