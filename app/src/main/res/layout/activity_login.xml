@@ -11,10 +11,10 @@
 
     <ImageView
         android:id="@+id/logo_image"
-        android:layout_width="299dp"
-        android:layout_height="267dp"
-        android:layout_marginTop="172dp"
-        android:src="@drawable/image"
+        android:layout_width="350dp"
+        android:layout_height="300dp"
+        android:layout_marginTop="150dp"
+        android:src="@drawable/sleeptight_login"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -23,14 +23,14 @@
         android:id="@+id/user_info_text"
         android:layout_width="184dp"
         android:layout_height="43dp"
-        android:layout_marginTop="388dp"
+        android:layout_marginTop="420dp"
         android:gravity="start"
         android:text="Welcome to"
         android:textColor="@android:color/white"
         android:textSize="30sp"
         android:textStyle="bold"
         app:layout_constraintEnd_toEndOf="@+id/kakao_login_button"
-        app:layout_constraintHorizontal_bias="0.222"
+        app:layout_constraintHorizontal_bias="0.235"
         app:layout_constraintStart_toStartOf="@+id/kakao_login_button"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -38,7 +38,7 @@
         android:id="@+id/sleeptight_text"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="10dp"
         android:gravity="end"
         android:text="SleepTight"
         android:textColor="@android:color/white"

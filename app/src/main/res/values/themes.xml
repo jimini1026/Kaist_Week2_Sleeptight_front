@@ -1,7 +1,7 @@
 <resources>
 
     <!-- Base application theme. -->
-    <style name="Theme.Kaist_Assignment2" parent="Theme.AppCompat.Light.DarkActionBar">
+    <style name="Theme.Kaist_Assignment2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary branding color. -->
         <item name="colorPrimary">@color/purple_500</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
