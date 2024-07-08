@@ -18,6 +18,7 @@ import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.kaist_assignment2.retrofit.ApiService
@@ -29,6 +30,7 @@ import retrofit2.Response
 
 class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
+    private val sharedViewModel: SharedViewModel by activityViewModels()
     private val REQUEST_CODE_READ_MEDIA_AUDIO = 1
     private var playbackDurationInMillis: Int = 0
     private lateinit var handler: Handler
@@ -109,6 +111,9 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             // 선택된 항목 초기화
             songsAdapter.clearSelection()
             selectedSongs.clear()
+
+            // Notify that songs have been updated
+            sharedViewModel.notifySongsUpdated()
         }
 
         handler = Handler(Looper.getMainLooper())
@@ -240,6 +245,7 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
     private fun saveSelectedSongsToDatabase(userId: String) {
         val apiService = RetrofitClient.apiService
+        var pendingUpdates = selectedSongs.size
 
         for (song in selectedSongs) {
             val call = apiService.getSongsData(userId, song.title)
@@ -256,10 +262,18 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
                     } else {
                         Toast.makeText(context, "Failed to check song existence", Toast.LENGTH_SHORT).show()
                     }
+                    pendingUpdates--
+                    if (pendingUpdates == 0) {
+                        sharedViewModel.notifySongsUpdated()
+                    }
                 }
 
                 override fun onFailure(call: Call<List<UserSongsData>>, t: Throwable) {
                     Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                    pendingUpdates--
+                    if (pendingUpdates == 0) {
+                        sharedViewModel.notifySongsUpdated()
+                    }
                 }
             })
         }
@@ -275,10 +289,12 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
                 } else {
                     Toast.makeText(context, "Failed to save $song to database", Toast.LENGTH_SHORT).show()
                 }
+                sharedViewModel.notifySongsUpdated()
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                sharedViewModel.notifySongsUpdated()
             }
         })
     }
@@ -293,10 +309,12 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
                 } else {
                     Toast.makeText(context, "Failed to update $song in database", Toast.LENGTH_SHORT).show()
                 }
+                sharedViewModel.notifySongsUpdated()
             }
 
             override fun onFailure(call: Call<Void>, t: Throwable) {
                 Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+                sharedViewModel.notifySongsUpdated()
             }
         })
     }
