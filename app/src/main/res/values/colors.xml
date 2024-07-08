@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="whiteblue">#ADD8E6</color> <!-- Light blue color, 원하는 색상 코드로 변경 가능 -->
     <color name="custom_purple">#6100EB</color>
+    <color name="light_black">#121212</color>
 </resources>
