@@ -14,6 +14,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.AlarmManagerCompat
 import androidx.fragment.app.Fragment
+import com.example.kaist_assignment2.MusicFragment.Companion
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -149,48 +150,59 @@ class UserFragment : Fragment() {
         }
     }
 
-private fun confirmSelectedTimes() {
-    if (selectedTextView == null) {
-        Toast.makeText(requireContext(), "Please select a time", Toast.LENGTH_SHORT).show()
-    } else {
-        val selectedTime = selectedTextView!!.text.toString()
+    private fun confirmSelectedTimes() {
+        if (selectedTextView == null) {
+            Toast.makeText(requireContext(), "Please select a time", Toast.LENGTH_SHORT).show()
+        } else {
+            val sleepTime = timeTextView.text.toString()
+            val selectedTime = selectedTextView!!.text.toString()
 
-        // 선택된 시간 파싱
-        val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
-        val selectedDate = sdf.parse(selectedTime)
-        val calendar = Calendar.getInstance()
+            // 자는 시간 파싱 후 가져오기
 
-        // 현재 시간 가져오기
-        val currentTime = Calendar.getInstance()
-        val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
-        val currentMinute = currentTime.get(Calendar.MINUTE)
+            // 선택된 시간 파싱
+            val sdf = SimpleDateFormat("HH:mm", Locale.getDefault())
+            val selectedDate = sdf.parse(selectedTime)
+            val calendar = Calendar.getInstance()
 
-        // 선택된 시간으로 Calendar 설정
-        calendar.time = selectedDate
-        val selectedHour = calendar.get(Calendar.HOUR_OF_DAY)
-        val selectedMinute = calendar.get(Calendar.MINUTE)
+            // 현재 시간 가져오기
+            val currentTime = Calendar.getInstance()
+            val currentHour = currentTime.get(Calendar.HOUR_OF_DAY)
+            val currentMinute = currentTime.get(Calendar.MINUTE)
 
-        // 시간 차이 계산
-        var alarmHour = selectedHour - currentHour
-        var alarmMinute = selectedMinute - currentMinute
+            // 선택된 시간으로 Calendar 설정
+            calendar.time = selectedDate
+            val selectedHour = calendar.get(Calendar.HOUR_OF_DAY)
+            val selectedMinute = calendar.get(Calendar.MINUTE)
 
-        // 음수 처리
-        if (alarmMinute < 0) {
-            alarmHour -= 1
-            alarmMinute += 60
+            // 시간 차이 계산
+            var alarmHour = selectedHour - currentHour
+            var alarmMinute = selectedMinute - currentMinute
+
+            // 음수 처리
+            if (alarmMinute < 0) {
+                alarmHour -= 1
+                alarmMinute += 60
+            }
+
+            // AlarmManager 설정
+            setAlarm(requireContext(), sleepTime, alarmHour, alarmMinute, selectedHour, selectedMinute)
+
+            // 사용자에게 선택된 시간 알림
+            Toast.makeText(requireContext(), "SleepTime : $sleepTime Selected Time: $selectedTime", Toast.LENGTH_SHORT).show()
         }
-
-        // AlarmManager 설정
-        setAlarm(requireContext(), alarmHour, alarmMinute)
-
-        // 사용자에게 선택된 시간 알림
-        Toast.makeText(requireContext(), "Selected Time: $selectedTime", Toast.LENGTH_SHORT).show()
     }
-}
 
-    private fun setAlarm(context: Context, hours: Int, minutes: Int) {
+    private fun setAlarm(context: Context, sleepTime: String, hours: Int, minutes: Int, selectedHour: Int, selectedMinute: Int) {
         val alarmManager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(context, AlarmReceiver::class.java)
+        val currentDate = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(Date())
+
+        val intent = Intent(context, AlarmReceiver::class.java).apply {
+            putExtra("userId", arguments?.getString(UserFragment.ARG_USER_ID))
+            putExtra("currentDate", currentDate)
+            putExtra("sleepTime", sleepTime)
+            putExtra("selectedHour", selectedHour)
+            putExtra("selectedMinute", selectedMinute)
+        }
         val pendingIntent = PendingIntent.getBroadcast(context, 0, intent, PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT)
 
         // 알람 시간 계산
@@ -207,5 +219,3 @@ private fun confirmSelectedTimes() {
         )
     }
 }
-
-
