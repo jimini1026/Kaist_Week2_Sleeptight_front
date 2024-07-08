@@ -20,6 +20,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.kaist_assignment2.retrofit.ApiService
 import com.example.kaist_assignment2.retrofit.RetrofitClient
+import com.example.kaist_assignment2.retrofit.UserSleepData
 import com.example.kaist_assignment2.retrofit.UserSongsData
 import com.prolificinteractive.materialcalendarview.CalendarDay
 import com.prolificinteractive.materialcalendarview.DayViewDecorator
@@ -29,7 +30,10 @@ import com.prolificinteractive.materialcalendarview.spans.DotSpan
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Locale
+import kotlin.math.log
 
 class CalendarFragment : Fragment() {
 
@@ -75,7 +79,10 @@ class CalendarFragment : Fragment() {
 
         calendarView.addDecorators(sundayDecorator, saturdayDecorator, todayDecorator, eventDecorator)
 
-        userId?.let { fetchTopSongsData(RetrofitClient.apiService, it) }
+        userId?.let {
+            fetchTopSongsData(RetrofitClient.apiService, it)
+            fetchSleepData(RetrofitClient.apiService, it)
+        }
 
         sharedViewModel.updateSongsEvent.observe(viewLifecycleOwner) {
             if (it) {
@@ -176,17 +183,6 @@ class CalendarFragment : Fragment() {
         })
     }
 
-    private fun fetchAdditionalSongInfo(topSongs: List<UserSongsData>) {
-        // 실제 아티스트 이름과 앨범 아트 데이터를 가져올 수 있는 로직을 추가합니다.
-        // 이 예제에서는 간단히 아티스트 이름과 앨범 아트를 설정합니다.
-        for (song in topSongs) {
-            song.artist = "Example Artist" // 실제 데이터를 여기에 설정합니다.
-            song.albumArt = "https://example.com/album_art.jpg" // 실제 데이터를 여기에 설정합니다.
-        }
-
-        displayTopSongs(topSongs)
-    }
-
     private fun displayTopSongs(topSongs: List<UserSongsData>) {
         val topSongsContainer: LinearLayout? = requireView().findViewById(R.id.topSongsContainer)
         topSongsContainer?.removeAllViews()
@@ -252,4 +248,92 @@ class CalendarFragment : Fragment() {
 
         return songs
     }
+
+    private fun fetchSleepData(apiService: ApiService, userId: String) {
+        val call = apiService.getSleepDataByID(userId)
+        call.enqueue(object : Callback<List<UserSleepData>> {
+            override fun onResponse(call: Call<List<UserSleepData>>, response: Response<List<UserSleepData>>) {
+                if (response.isSuccessful) {
+                    val sleepDataList = response.body()
+                    if (!sleepDataList.isNullOrEmpty()) {
+                        val averageSleepData = calculateAverageSleepData(sleepDataList)
+                        displayAverageSleepData(averageSleepData)
+                    } else {
+                        Toast.makeText(context, "No sleep data found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("CalendarFragment", "Error response: $errorBody")
+                    Toast.makeText(context, "Failed to fetch sleep data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserSleepData>>, t: Throwable) {
+                Log.e("CalendarFragment", "Failed to send GET request: ${t.message}")
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+    private fun calculateAverageSleepData(sleepDataList: List<UserSleepData>): AverageSleepData {
+        val dateFormat = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+        var totalSleepTimeMillis: Long = 0
+        var totalBedTimeMillis: Long = 0
+        var totalWakeTimeMillis: Long = 0
+
+        for (sleepData in sleepDataList) {
+            val sleepTime = dateFormat.parse(sleepData.sleepTime)?.time ?: 0
+            val realWakeTime = dateFormat.parse(sleepData.realWakeTime)?.time ?: 0
+
+            val sleepTimeStr = sleepTime.toString()
+            Toast.makeText(requireContext(), " $sleepTimeStr", Toast.LENGTH_SHORT).show()
+
+            val sleepDuration = realWakeTime - sleepTime
+            totalSleepTimeMillis += sleepDuration
+
+            totalBedTimeMillis += sleepTime
+            totalWakeTimeMillis += realWakeTime
+        }
+
+        val averageSleepTimeMillis = totalSleepTimeMillis / sleepDataList.size
+        val averageBedTimeMillis = totalBedTimeMillis / sleepDataList.size
+        val averageWakeTimeMillis = totalWakeTimeMillis / sleepDataList.size
+
+        return AverageSleepData(
+            averageBedTimeMillis,
+            averageWakeTimeMillis,
+            averageSleepTimeMillis
+        )
+    }
+
+    private fun displayAverageSleepData(averageSleepData: AverageSleepData) {
+        val bedTimeView: TextView? = view?.findViewById(R.id.bedTimeValue)
+        val wakeTimeView: TextView? = view?.findViewById(R.id.wakeTimeValue)
+        val sleepTimeView: TextView? = view?.findViewById(R.id.sleepTimeValue)
+
+        bedTimeView?.text = convertMillisToTime(averageSleepData.averageBedTimeMillis)
+        wakeTimeView?.text = convertMillisToTime(averageSleepData.averageWakeTimeMillis)
+        sleepTimeView?.text = convertMillisToHours(averageSleepData.averageSleepTimeMillis)
+
+    }
+
+    private fun convertMillisToTime(millis: Long): String {
+        val calendar = Calendar.getInstance()
+        calendar.timeInMillis = millis
+        val hours = calendar.get(Calendar.HOUR_OF_DAY)
+        val minutes = calendar.get(Calendar.MINUTE)
+        return String.format("%02d:%02d", hours, minutes)
+    }
+
+    private fun convertMillisToHours(millis: Long): String {
+        val hours = (millis / (1000 * 60 * 60)).toInt()
+        val minutes = ((millis / (1000 * 60)) % 60).toInt()
+        return String.format("%d hours %02d minutes", hours, minutes)
+    }
 }
+
+data class AverageSleepData(
+    val averageBedTimeMillis: Long,
+    val averageWakeTimeMillis: Long,
+    val averageSleepTimeMillis: Long
+)
