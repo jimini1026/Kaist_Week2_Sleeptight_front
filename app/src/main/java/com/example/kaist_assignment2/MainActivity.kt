@@ -3,6 +3,7 @@ package com.example.kaist_assignment2
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
+import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
@@ -24,6 +25,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private lateinit var adapter: ViewPagerAdapter
+
+    private val sharedViewModel: SharedViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -68,7 +71,7 @@ class MainActivity : AppCompatActivity() {
             return when (position) {
                 0 -> UserFragment.newInstance(userName, userId)
                 1 -> MusicFragment.newInstance(userName, userId)
-                2 -> CalendarFragment.newInstance()
+                2 -> CalendarFragment.newInstance(userName, userId)
                 else -> throw IllegalStateException("Unexpected position $position")
             }
         }
