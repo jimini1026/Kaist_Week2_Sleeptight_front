@@ -121,7 +121,7 @@ class CalendarFragment : Fragment() {
 
         userId?.let {
             fetchTopSongsData(RetrofitClient.apiService, it)
-            fetchSleepData(RetrofitClient.apiService, it)
+            fetchSleepDataAndDecorateCalendar(RetrofitClient.apiService, it, calendarView)
         }
 
         sharedViewModel.updateSongsEvent.observe(viewLifecycleOwner) {
@@ -193,6 +193,21 @@ class CalendarFragment : Fragment() {
 
         override fun decorate(view: DayViewFacade?) {
             view?.addSpan(DotSpan(5F, color))
+        }
+    }
+
+    inner class SuccessWakeupDecorator(private val dates: Collection<CalendarDay>, context: Context) : DayViewDecorator {
+        private val datesSet = HashSet(dates)
+        private val drawable = context.resources.getDrawable(R.drawable.success_wakeup_deco, null)
+
+        override fun shouldDecorate(day: CalendarDay?): Boolean {
+            return datesSet.contains(day)
+        }
+
+        override fun decorate(view: DayViewFacade?) {
+            drawable?.let {
+                view?.setBackgroundDrawable(it)
+            }
         }
     }
 
@@ -306,6 +321,38 @@ class CalendarFragment : Fragment() {
                     if (!sleepDataList.isNullOrEmpty()) {
                         val averageSleepData = calculateAverageSleepData(sleepDataList)
                         displayAverageSleepData(averageSleepData)
+                    } else {
+                        Toast.makeText(context, "No sleep data found", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    val errorBody = response.errorBody()?.string()
+                    Log.e("CalendarFragment", "Error response: $errorBody")
+                    Toast.makeText(context, "Failed to fetch sleep data", Toast.LENGTH_SHORT).show()
+                }
+            }
+
+            override fun onFailure(call: Call<List<UserSleepData>>, t: Throwable) {
+                Log.e("CalendarFragment", "Failed to send GET request: ${t.message}")
+                Toast.makeText(context, "Error: ${t.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
+    }
+
+
+    private fun fetchSleepDataAndDecorateCalendar(apiService: ApiService, userId: String, calendarView: MaterialCalendarView) {
+        val call = apiService.getSleepDataByID(userId)
+        call.enqueue(object : Callback<List<UserSleepData>> {
+            override fun onResponse(call: Call<List<UserSleepData>>, response: Response<List<UserSleepData>>) {
+                if (response.isSuccessful) {
+                    val sleepDataList = response.body()
+                    if (!sleepDataList.isNullOrEmpty()) {
+                        val successWakeupDates = sleepDataList.filter {
+                            it.predWakeTime == it.realWakeTime
+                        }.map {
+                            CalendarDay.from(it.date.year + 1900, it.date.month, it.date.date) // Date 객체에서 연도, 월, 일 추출
+                        }
+                        val successWakeupDecorator = SuccessWakeupDecorator(successWakeupDates, requireContext())
+                        calendarView.addDecorator(successWakeupDecorator)
                     } else {
                         Toast.makeText(context, "No sleep data found", Toast.LENGTH_SHORT).show()
                     }
