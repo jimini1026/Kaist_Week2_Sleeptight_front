@@ -77,6 +77,7 @@ class MainActivity : AppCompatActivity() {
     // 사용자가 존재하는지 확인하는 메소드
     private fun checkUserExistence(apiService: ApiService, userId: String, userName: String?) {
         val call = apiService.getUser(userId)
+        Toast.makeText(this@MainActivity, "check UserExistence USER_ID : '$userId'", Toast.LENGTH_SHORT).show()
 
         call.enqueue(object : Callback<User> {
             override fun onResponse(call: Call<User>, response: Response<User>) {
