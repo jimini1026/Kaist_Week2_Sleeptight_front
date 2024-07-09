@@ -2,9 +2,14 @@ package com.example.kaist_assignment2
 
 import android.os.Bundle
 import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import androidx.viewpager2.adapter.FragmentStateAdapter
 import androidx.viewpager2.widget.ViewPager2
@@ -25,6 +30,8 @@ class MainActivity : AppCompatActivity() {
     private lateinit var viewPager: ViewPager2
     private lateinit var tabLayout: TabLayout
     private lateinit var adapter: ViewPagerAdapter
+    private lateinit var drawerLayout: DrawerLayout
+    private lateinit var drawerProfile: LinearLayout
 
     private val sharedViewModel: SharedViewModel by viewModels()
 
@@ -49,6 +56,9 @@ class MainActivity : AppCompatActivity() {
 //            updateSongData(apiService, "test_id", "test_song2", 100)
         }
 
+        drawerLayout = findViewById(R.id.drawer_layout)
+        drawerProfile = findViewById(R.id.drawer_profile)
+
         viewPager = findViewById(R.id.view_pager)
         tabLayout = findViewById(R.id.tab_layout)
         adapter = ViewPagerAdapter(this, userName, userId)
@@ -71,15 +81,35 @@ class MainActivity : AppCompatActivity() {
                     tab.text = "History"
 //                    tab.setIcon(R.drawable.ic_history) // 세 번째 탭에 아이콘 설정
                 }
+//
+                3 -> {
+                    tab.view.visibility = View.GONE // Hide the Profile tab
+                }
             }
         }.attach()
+
+        // Load ProfileFragment into the drawer layout
+        val profileFragment = ProfileFragment.newInstance(userName, userId)
+        supportFragmentManager.beginTransaction().replace(R.id.drawer_profile, profileFragment).commit()
+
+        // Open drawer when swiping left on the History tab
+        viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            override fun onPageSelected(position: Int) {
+                super.onPageSelected(position)
+                if (position == 2) {
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END)
+                } else {
+                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END)
+                }
+            }
+        })
     }
 
     private inner class ViewPagerAdapter(activity: AppCompatActivity, private val userName: String?, private val userId: String?) :
         FragmentStateAdapter(activity) {
 
         override fun getItemCount(): Int {
-            return 3
+            return 4
         }
 
         override fun createFragment(position: Int): Fragment {
@@ -87,6 +117,7 @@ class MainActivity : AppCompatActivity() {
                 0 -> UserFragment.newInstance(userName, userId)
                 1 -> MusicFragment.newInstance(userName, userId)
                 2 -> CalendarFragment.newInstance(userName, userId)
+                3 -> ProfileFragment.newInstance(userName, userId)
                 else -> throw IllegalStateException("Unexpected position $position")
             }
         }
