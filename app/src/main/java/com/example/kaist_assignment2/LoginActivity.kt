@@ -23,6 +23,7 @@ class LoginActivity : AppCompatActivity() {
         kakaoLoginButton.setOnClickListener {
             val intent = Intent(this, AuthCodeHandlerActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_AUTH)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
 
         val internalLoginButton: Button = findViewById(R.id.internal_login_button)
@@ -30,6 +31,7 @@ class LoginActivity : AppCompatActivity() {
         internalLoginButton.setOnClickListener {
             val intent = Intent(this, InternalLoginActivity::class.java)
             startActivityForResult(intent, REQUEST_CODE_AUTH)
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
     }
 
