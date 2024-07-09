@@ -5,7 +5,19 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp">
+    android:background="@color/light_black">
+
+<!--    &lt;!&ndash; ImageView for background &ndash;&gt;-->
+<!--    <ImageView-->
+<!--        android:id="@+id/backgroundImage"-->
+<!--        android:layout_width="0dp"-->
+<!--        android:layout_height="0dp"-->
+<!--        android:scaleType="centerCrop"-->
+<!--        android:src="@drawable/gradient_background"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent" />-->
 
     <!-- TextView to display time -->
     <TextView
@@ -34,75 +46,81 @@
     <!-- TextViews -->
     <TextView
         android:id="@+id/textView1"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 1"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/setTimeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textView2"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 2"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textView1"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textView3"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 3"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textView4"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 4"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textView3"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textView5"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 5"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textView4"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <TextView
         android:id="@+id/textView6"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:text="TextView 6"
         android:textColor="#FFFFFF"
+        android:gravity="center"
+        android:background="@android:color/black"
         app:layout_constraintTop_toBottomOf="@id/textView5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="16dp"
-        android:background="?attr/selectableItemBackground"/>
+        android:layout_marginTop="16dp"/>
 
     <!-- Confirm Button -->
     <Button
