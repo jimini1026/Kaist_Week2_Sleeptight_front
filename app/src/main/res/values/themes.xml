@@ -10,13 +10,15 @@
         <item name="windowActionBar">false</item>
     </style>
 
-    <style name="CustomTimePickerDialog" parent="Theme.AppCompat.Dialog">
-        <item name="android:background">#000000</item>
-        <item name="android:headerBackground">@color/custom_purple</item>
-        <item name="android:numbersBackgroundColor">@color/custom_purple</item>
-        <item name="android:numbersSelectorColor">@color/custom_yellow</item>
-        <item name="android:numbersTextColor">#FFFFFF</item>
-        <item name="android:numbersInnerTextColor">#FFFFFF</item>
+    <style name="CustomTimePickerDialog" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">@color/black</item>
+        <item name="android:headerBackground">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:numbersTextColor">@color/black</item>
+        <item name="android:numbersBackgroundColor">@color/custom_yellow</item>
+        <item name="android:colorAccent">@color/black</item>
+        <item name="android:numbersSelectorColor">@color/custom_purple</item>
     </style>
+
 
 </resources>

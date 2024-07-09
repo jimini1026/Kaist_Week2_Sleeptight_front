@@ -12,7 +12,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="40dp"
         android:text="12:00"
         android:textColor="#FFFFFF"
         android:textSize="70sp"
@@ -24,12 +24,12 @@
     <!-- Set Time Button -->
     <Button
         android:id="@+id/setTimeButton"
-        android:layout_width="60dp"
+        android:layout_width="75dp"
         android:layout_height="35dp"
-        android:layout_marginTop="55dp"
-        android:layout_marginStart="20dp"
+        android:layout_marginTop="60dp"
+        android:layout_marginStart="15dp"
         android:background="@drawable/alarmfragbutton_rounded_button"
-        android:text="Sleep"
+        android:text="Set Time"
         android:textSize="13sp"
         android:textColor="@android:color/white"
         app:layout_constraintTop_toTopOf="@id/timeTextView"
@@ -43,7 +43,7 @@
         app:layout_constraintTop_toBottomOf="@id/setTimeButton"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:layout_marginTop="50dp">
+        android:layout_marginTop="45dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:id="@+id/firstTextViewGroup"

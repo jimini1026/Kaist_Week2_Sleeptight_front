@@ -59,12 +59,17 @@ class MainActivity : AppCompatActivity() {
             when (position) {
                 0 -> {
                     tab.text = "Alarm"
+//                    tab.setIcon(R.drawable.ic_alarm) // 첫 번째 탭에 아이콘 설정
                 }
+
                 1 -> {
                     tab.text = "Songs"
+//                    tab.setIcon(R.drawable.ic_music) // 두 번째 탭에 아이콘 설정
                 }
+
                 2 -> {
                     tab.text = "History"
+//                    tab.setIcon(R.drawable.ic_history) // 세 번째 탭에 아이콘 설정
                 }
             }
         }.attach()
