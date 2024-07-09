@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".CalendarFragment"
-    >
+    android:background="#121212">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -22,6 +22,8 @@
             app:layout_constraintHeight_percent="0.42"
             app:layout_constraintWidth_percent="0.95"
             app:mcv_selectionColor="@color/whiteblue"
+            app:mcv_headerTextAppearance="@style/CalendarMonthTitleTextAppearance"
+            app:mcv_weekDayTextAppearance="@style/CalendarWeekDayTextAppearance"
             />
 
         <androidx.cardview.widget.CardView
