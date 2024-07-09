@@ -116,6 +116,13 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             sharedViewModel.notifySongsUpdated()
         }
 
+        val cancelButton: Button = view.findViewById(R.id.cancel_button)
+        cancelButton.setOnClickListener {
+            // 선택된 항목 초기화
+            songsAdapter.clearSelection()
+            selectedSongs.clear()
+        }
+
         handler = Handler(Looper.getMainLooper())
 
         return view

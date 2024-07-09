@@ -18,4 +18,14 @@
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:backgroundDimEnabled">true</item>
     </style>
+
+    <style name="MyBase.TimePicker" parent="Theme.AppCompat.Light.Dialog">
+        <item name="android:background">#121212</item>
+        <item name="android:headerBackground">#121212</item>
+        <item name="android:textColor">@android:color/white</item>
+        <item name="android:colorAccent">@android:color/white</item>
+        <item name="android:textColorPrimary">@android:color/white</item>
+        <!-- NumberPicker divider color -->
+        <item name="colorControlNormal">@android:color/white</item>
+    </style>
 </resources>
