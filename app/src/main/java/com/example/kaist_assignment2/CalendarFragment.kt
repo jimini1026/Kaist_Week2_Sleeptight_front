@@ -168,6 +168,8 @@ class CalendarFragment : Fragment() {
             drawable?.let {
                 view?.setBackgroundDrawable(it)
             }
+            // 날짜 밑에 점 추가
+            view?.addSpan(DotSpan(5F, Color.parseColor("#FAE100")))
         }
     }
 
@@ -207,7 +209,7 @@ class CalendarFragment : Fragment() {
         }
 
         override fun decorate(view: DayViewFacade?) {
-            view?.addSpan(DotSpan(5F, color))
+            view?.addSpan(DotSpan(5F, Color.parseColor("#FAE100")))
         }
     }
 
