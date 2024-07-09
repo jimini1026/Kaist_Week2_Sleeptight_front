@@ -11,11 +11,10 @@
         android:layout_height="wrap_content"
         android:paddingLeft="15dp"
         android:paddingRight="15dp"
-        android:paddingTop="25dp"
-        android:paddingBottom="45dp"
+        android:paddingTop="10dp"
         android:orientation="vertical"
-        android:background="@color/white"
-        android:gravity="center_horizontal">
+        android:background="@drawable/rounded_corners"
+        android:gravity="start">
 
         <TextView
             android:id="@+id/dateTextView"
@@ -23,14 +22,95 @@
             android:layout_height="wrap_content"
             android:textSize="25sp"
             android:textStyle="bold"
-            android:paddingTop="6dp"
-            android:gravity="center"/>
+            android:paddingTop="3dp"
+            android:paddingBottom="8dp"
+            android:textColor="@color/black"
+            android:gravity="center" />
 
         <TextView
-            android:id="@+id/infoTextView"
+            android:id="@+id/sleptAtLabelTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:text="Slept at"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/sleptAtTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:gravity="start" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginVertical="10dp" />
+
+        <TextView
+            android:id="@+id/setAlarmAtLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Set alarm at"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/setAlarmAtTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:gravity="start" />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="#CCCCCC"
+            android:layout_marginVertical="10dp" />
+
+        <TextView
+            android:id="@+id/wokeUpAtLabelTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Woke up at"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="@color/black"
+            android:layout_marginTop="10dp"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/wokeUpAtTimeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:textColor="@color/black"
+            android:gravity="start" />
+
+        <TextView
+            android:id="@+id/confirmTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="확인"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_gravity="center_horizontal"
+            android:textColor="#FFFFFF"
+            android:background="#FAE100"
             android:layout_marginTop="15dp"
-            android:gravity="center" />
+            android:paddingTop="3dp"
+            android:paddingBottom="3dp"
+            android:paddingLeft="75dp"
+            android:paddingRight="75dp" />
     </LinearLayout>
 </LinearLayout>
