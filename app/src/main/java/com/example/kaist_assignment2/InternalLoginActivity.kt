@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 
 class InternalLoginActivity : AppCompatActivity() {
@@ -38,6 +39,18 @@ class InternalLoginActivity : AppCompatActivity() {
             }
             setResult(Activity.RESULT_OK, resultIntent)
             finish() // 현재 액티비티를 종료합니다.
+            overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
+
+        val callback = object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                // 여기에 뒤로 가기 버튼을 눌렀을 때 실행할 코드를 작성합니다.
+                // 예를 들어, 애니메이션을 추가하거나 원하는 동작을 수행할 수 있습니다.
+                finish()
+                overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            }
+        }
+        onBackPressedDispatcher.addCallback(this, callback)
     }
+
 }
