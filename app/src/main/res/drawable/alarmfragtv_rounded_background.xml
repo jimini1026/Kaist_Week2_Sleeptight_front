@@ -1,7 +1,6 @@
-<!-- rounded_background.xml -->
+<!-- alarmfragtv_rounded_background.xml.xml -->
 <shape xmlns:android="http://schemas.android.com/apk/res/android"
     android:shape="rectangle">
     <solid android:color="@color/light_black"/>
     <corners android:radius="16dp"/>
-<!--    <stroke android:width="2dp" android:color="@color/custom_bright_purple"/>-->
 </shape>

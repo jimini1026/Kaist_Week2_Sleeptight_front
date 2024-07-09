@@ -50,8 +50,8 @@ class AlarmReceiver : BroadcastReceiver() {
 
         // Notification Builder 생성
         val notificationBuilder = NotificationCompat.Builder(context, "alarm_channel")
-            .setSmallIcon(R.drawable.ic_alarm)
-            .setContentTitle("Alarm Notification")
+            .setSmallIcon(R.mipmap.ic_launcher)
+            .setContentTitle("Sleeptight Alarm Notification")
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)

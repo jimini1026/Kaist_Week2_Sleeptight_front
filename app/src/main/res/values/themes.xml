@@ -3,9 +3,20 @@
     <!-- Base application theme. -->
     <style name="Theme.Kaist_Assignment2" parent="Theme.AppCompat.Light.NoActionBar">
         <!-- Primary branding color. -->
-        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimary">@color/custom_purple</item>
         <item name="colorPrimaryDark">@color/purple_700</item>
         <item name="colorAccent">@color/teal_200</item>
+        <item name="windowNoTitle">true</item>
+        <item name="windowActionBar">false</item>
+    </style>
+
+    <style name="CustomTimePickerDialog" parent="Theme.AppCompat.Dialog">
+        <item name="android:background">#000000</item>
+        <item name="android:headerBackground">@color/custom_purple</item>
+        <item name="android:numbersBackgroundColor">@color/custom_purple</item>
+        <item name="android:numbersSelectorColor">@color/custom_yellow</item>
+        <item name="android:numbersTextColor">#FFFFFF</item>
+        <item name="android:numbersInnerTextColor">#FFFFFF</item>
     </style>
 
 </resources>
