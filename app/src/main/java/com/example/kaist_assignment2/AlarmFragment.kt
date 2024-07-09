@@ -88,20 +88,22 @@ class UserFragment : Fragment() {
         }
     }
 
+
     private fun toggleTextViewSelection(textView: TextView) {
         if (selectedTextView == textView) {
-            // 선택된 TextView를 다시 클릭하면 선택 해제
-            selectedTextView?.setBackgroundResource(android.R.color.transparent)
+            // Deselect the currently selected TextView
+            selectedTextView?.isSelected = false
             selectedTextView = null
         } else {
-            // 이전에 선택된 TextView의 선택 해제
-            selectedTextView?.setBackgroundResource(android.R.color.transparent)
+            // Deselect the previously selected TextView
+            selectedTextView?.isSelected = false
 
-            // 현재 TextView를 선택 상태로 변경
+            // Select the new TextView
             selectedTextView = textView
-            textView.setBackgroundResource(R.color.whiteblue)
+            textView.isSelected = true
         }
     }
+
 
     private fun showTimePickerDialog() {
         val currentTime = Calendar.getInstance()
@@ -110,6 +112,7 @@ class UserFragment : Fragment() {
 
         val timePickerDialog = TimePickerDialog(
             requireActivity(),
+            R.style.CustomTimePickerDialog,
             TimePickerDialog.OnTimeSetListener { view, hourOfDay, minute ->
                 updateTimeViews(hourOfDay, minute)
                 val timeText = String.format("%02d:%02d", hourOfDay, minute)

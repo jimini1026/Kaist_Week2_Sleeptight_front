@@ -1,9 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
+    android:background="@color/black"
+    android:padding="16dp">
+
+    <ImageView
+        android:id="@+id/alarmImageView"
+        android:layout_width="0dp"
+        android:layout_height="200dp"
+        android:src="@drawable/sleeptight_splash"
+        android:scaleType="centerCrop"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="130dp"
+        app:layout_constraintDimensionRatio="W,2:1" />
 
     <TextView
         android:id="@+id/mainTextView"
@@ -11,22 +25,45 @@
         android:layout_height="wrap_content"
         android:text="Alarm Activity: wakeup!"
         android:textSize="24sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:textColor="@color/white"
+        app:layout_constraintTop_toBottomOf="@id/alarmImageView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:layout_marginTop="30dp" />
 
     <Button
         android:id="@+id/wakeUpButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="지금 일어날게요"
-        android:layout_marginTop="16dp"
-        android:onClick="onWakeUpClicked" />
+        android:text="Wake Up Now"
+        android:textSize="18sp"
+        android:textColor="@color/black"
+        android:onClick="onWakeUpClicked"
+        android:background="@drawable/alarm_wakeupnow_rounded_button"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        app:layout_constraintTop_toBottomOf="@id/mainTextView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="70dp" />
 
     <Button
         android:id="@+id/sleepFiveMoreButton"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:text="5분만 더 잘래요"
-        android:layout_marginTop="16dp"
-        android:onClick="onSleepFiveMoreClicked" />
+        android:text="Sleep 5 More Minutes"
+        android:textColor="@color/white"
+        android:textSize="13sp"
+        android:onClick="onSleepFiveMoreClicked"
+        android:background="@drawable/alarm_sleepmore_rounded_button"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        app:layout_constraintTop_toBottomOf="@id/wakeUpButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintWidth_percent="0.8"
+        android:layout_marginTop="20dp" />
 
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
