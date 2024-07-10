@@ -44,9 +44,6 @@ class LoginActivity : AppCompatActivity() {
             val userName = data?.getStringExtra("USER_NAME")
 
             if (!userId.isNullOrBlank()) {
-                // Toast 메시지로도 정보 표시
-                val toastMessage = "User ID: $userId\n User Name: $userName"
-                Toast.makeText(this, toastMessage, Toast.LENGTH_SHORT).show()
 
                 // MainActivity로 사용자 정보 전달
                 val resultIntent = Intent(this, MainActivity::class.java)

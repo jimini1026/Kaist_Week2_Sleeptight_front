@@ -72,7 +72,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
         val userName = arguments?.getString(ARG_USER_NAME)
         val userId = arguments?.getString(ARG_USER_ID)
-        Toast.makeText(context, "Username: $userName, UserID: $userId", Toast.LENGTH_LONG).show()
 
         // 권한 확인
         if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.READ_MEDIA_AUDIO)
@@ -147,7 +146,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
 
     private fun playNextSongWithTimer(mediaPlayer: MediaPlayer, selectedSongs_list: MutableList<Song>,index: Int, remainingTime: Int) {
         if (index >= selectedSongs_list.size || remainingTime <= 0) {
-            Toast.makeText(context, "Index : $index Size : ${selectedSongs_list.size}", Toast.LENGTH_SHORT).show()
             stopPlayback()
             Toast.makeText(context, "Playback time is over", Toast.LENGTH_SHORT).show()
             return
@@ -245,10 +243,8 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
     override fun onItemClick(song: Song) {
         if (selectedSongs.contains(song)) {
             selectedSongs.remove(song)
-            Toast.makeText(context, "${song.title} removed from playlist", Toast.LENGTH_SHORT).show()
         } else {
             selectedSongs.add(song)
-            Toast.makeText(context, "${song.title} added to playlist", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -294,7 +290,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(context, "$song saved to database", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Failed to save $song to database", Toast.LENGTH_SHORT).show()
                 }
@@ -314,7 +309,6 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         call.enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(context, "$song updated in database", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "Failed to update $song in database", Toast.LENGTH_SHORT).show()
                 }
