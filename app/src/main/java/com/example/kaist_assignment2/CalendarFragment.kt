@@ -340,6 +340,10 @@ class CalendarFragment : Fragment() {
                         }
                         val successWakeupDecorator = SuccessWakeupDecorator(successWakeupDates, requireContext())
                         calendarView.addDecorator(successWakeupDecorator)
+
+                        // 평균 수면 데이터를 계산하고 표시
+                        val averageSleepData = calculateAverageSleepData(sleepDataList)
+                        displayAverageSleepData(averageSleepData)
                     } else {
                         Toast.makeText(context, "No sleep data found", Toast.LENGTH_SHORT).show()
                     }
