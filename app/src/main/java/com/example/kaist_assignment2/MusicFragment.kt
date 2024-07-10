@@ -102,7 +102,9 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             val seconds = secondPicker.value
             playbackDurationInMillis = (minutes * 60 + seconds) * 1000
             startTimer(minutePicker, secondPicker)
-            playSelectedSongs()
+
+            val selectedSongs_list = selectedSongs.toMutableList()
+            playSelectedSongs(selectedSongs_list)
 
             userId?.let { id ->
                 saveSelectedSongsToDatabase(id)
@@ -133,24 +135,25 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
         stopPlayback()
     }
 
-    private fun playSelectedSongs() {
-        if (selectedSongs.isEmpty()) {
+    private fun playSelectedSongs(selectedSongs_list: MutableList<Song>) {
+        if (selectedSongs_list.isEmpty()) {
             Toast.makeText(context, "No songs selected", Toast.LENGTH_SHORT).show()
             return
         }
 
         val mediaPlayer = MediaPlayer()
-        playNextSongWithTimer(mediaPlayer, 0, playbackDurationInMillis)
+        playNextSongWithTimer(mediaPlayer, selectedSongs_list, 0, playbackDurationInMillis)
     }
 
-    private fun playNextSongWithTimer(mediaPlayer: MediaPlayer, index: Int, remainingTime: Int) {
-        if (index >= selectedSongs.size || remainingTime <= 0) {
+    private fun playNextSongWithTimer(mediaPlayer: MediaPlayer, selectedSongs_list: MutableList<Song>,index: Int, remainingTime: Int) {
+        if (index >= selectedSongs_list.size || remainingTime <= 0) {
+            Toast.makeText(context, "Index : $index Size : ${selectedSongs_list.size}", Toast.LENGTH_SHORT).show()
             stopPlayback()
             Toast.makeText(context, "Playback time is over", Toast.LENGTH_SHORT).show()
             return
         }
 
-        val song = selectedSongs[index]
+        val song = selectedSongs_list[index]
         mediaPlayer.reset()
         mediaPlayer.setDataSource(song.filePath)
         mediaPlayer.prepare()
@@ -163,7 +166,7 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             if (mediaPlayer.isPlaying) {
                 mediaPlayer.stop()
             }
-            playNextSongWithTimer(mediaPlayer, index + 1, remainingTime - playTime)
+            playNextSongWithTimer(mediaPlayer, selectedSongs_list,index + 1, remainingTime - playTime)
         }, playTime.toLong())
     }
 
@@ -211,8 +214,7 @@ class MusicFragment : Fragment(), SongsAdapter.OnItemClickListener {
             MediaStore.Audio.Media.ALBUM_ID
         )
         val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0"
-        val sortOrder = "${MediaStore.Audio.Media.TITLE} ASC"
-
+        val sortOrder = "${MediaStore.Audio.Media.DATE_ADDED} DESC"
         val cursor = requireContext().contentResolver.query(
             MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
             projection,
