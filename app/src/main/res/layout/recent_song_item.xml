@@ -5,35 +5,33 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_margin="8dp"
-    android:orientation="vertical"
     app:cardCornerRadius="12dp"
-    app:cardElevation="4dp"
-    android:padding="8dp">
+    app:cardElevation="4dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        android:gravity="center_vertical">
+        android:orientation="horizontal"
+        android:padding="15dp">
+
+        <ImageView
+            android:id="@+id/albumArt"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:layout_marginEnd="8dp"
+            android:scaleType="centerCrop" />
 
         <TextView
             android:id="@+id/songTitle"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_weight="1"
             android:textColor="@android:color/white"
             android:textSize="16sp"
             android:textStyle="bold"
-            android:gravity="center_horizontal"/>
-
-        <TextView
-            android:id="@+id/songArtist"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="@android:color/darker_gray"
-            android:textSize="14sp"
-            android:gravity="center_horizontal"/>
+            android:gravity="center_vertical"
+            android:maxLines="3"
+            android:ellipsize="end"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

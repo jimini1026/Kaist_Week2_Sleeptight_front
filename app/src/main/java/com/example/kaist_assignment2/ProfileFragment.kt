@@ -18,7 +18,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import android.graphics.Color
 import android.net.Uri
+import android.provider.MediaStore
+import android.text.TextUtils
 import android.widget.ImageView
+import com.bumptech.glide.Glide
 
 
 class ProfileFragment : Fragment() {
@@ -77,7 +80,8 @@ class ProfileFragment : Fragment() {
                     val songs = response.body()
                     if (songs != null) {
                         val recentSongs = songs.sortedByDescending { it.playNum }.take(5)
-                        displayRecentSongs(recentSongs)
+//                        displayRecentSongs(recentSongs)
+                        fetchAlbumArtForSongs(recentSongs)
                     } else {
                         Toast.makeText(context, "No recent songs found", Toast.LENGTH_SHORT).show()
                     }
@@ -93,23 +97,69 @@ class ProfileFragment : Fragment() {
         })
     }
 
+    private fun fetchAlbumArtForSongs(songs: List<UserSongsData>) {
+        val updatedSongs = songs.map { song ->
+            val albumArtUri = getAlbumArtUri(song.song) ?: ""
+            song.copy(albumArt = albumArtUri, artist = song.artist ?: "")
+        }
+        displayRecentSongs(updatedSongs)
+    }
+
+    private fun getAlbumArtUri(songTitle: String): String? {
+        val projection = arrayOf(
+            MediaStore.Audio.Media.TITLE,
+            MediaStore.Audio.Media.ALBUM_ID
+        )
+        val selection = "${MediaStore.Audio.Media.IS_MUSIC} != 0 AND ${MediaStore.Audio.Media.TITLE} = ?"
+        val selectionArgs = arrayOf(songTitle)
+
+        val cursor = requireContext().contentResolver.query(
+            MediaStore.Audio.Media.EXTERNAL_CONTENT_URI,
+            projection,
+            selection,
+            selectionArgs,
+            null
+        )
+
+        var albumArtUri: String? = null
+
+        cursor?.use {
+            if (it.moveToFirst()) {
+                val albumId = it.getLong(it.getColumnIndexOrThrow(MediaStore.Audio.Media.ALBUM_ID))
+                albumArtUri = Uri.parse("content://media/external/audio/albumart/$albumId").toString()
+            }
+        }
+
+        return albumArtUri
+    }
+
     private fun displayRecentSongs(songs: List<UserSongsData>) {
         recentSongsContainer.removeAllViews()
         val colors = arrayOf(
             "#C497FE",
             "#F7B3FE",
-            "#E8FF69",
+            "#f4a688",
             "#89E7FF",
             "#A98AFF"
         )
         for ((index, song) in songs.withIndex()) {
             val songView = LayoutInflater.from(context).inflate(R.layout.recent_song_item, recentSongsContainer, false)
+            val albumArt: ImageView = songView.findViewById(R.id.albumArt)
             val songTitle: TextView = songView.findViewById(R.id.songTitle)
-            val songArtist: TextView = songView.findViewById(R.id.songArtist)
+//            val songArtist: TextView = songView.findViewById(R.id.songArtist)
             val cardView: androidx.cardview.widget.CardView = songView.findViewById(R.id.cardView)
 
             songTitle.text = song.song
-            songArtist.text = song.artist
+            songTitle.maxLines = 3
+            songTitle.ellipsize = TextUtils.TruncateAt.END
+//            songArtist.text = song.artist
+
+            // 앨범 아트 로드
+            Glide.with(this)
+                .load(song.albumArt)
+                .placeholder(R.drawable.album_art_1) // 기본 이미지
+                .error(R.drawable.album_art_1) // 오류 시 이미지
+                .into(albumArt)
 
             cardView.setCardBackgroundColor(Color.parseColor(colors[index % colors.size]))
 
