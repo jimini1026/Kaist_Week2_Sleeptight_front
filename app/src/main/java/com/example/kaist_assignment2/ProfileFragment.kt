@@ -1,5 +1,6 @@
 package com.example.kaist_assignment2
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,8 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import android.graphics.Color
+import android.net.Uri
+import android.widget.ImageView
 
 
 class ProfileFragment : Fragment() {
@@ -48,6 +51,13 @@ class ProfileFragment : Fragment() {
         val tvProfileName: TextView = view.findViewById(R.id.tv_profile_name)
         val tvProfileId: TextView = view.findViewById(R.id.tv_profile_id)
         recentSongsContainer = view.findViewById(R.id.recent_songs_container)
+
+        val profileImage: ImageView = view.findViewById(R.id.image_profile)
+        profileImage.setOnClickListener {
+            // 클릭 시 원하는 웹 페이지로 이동하는 코드
+            val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://github.com/jimini1026/Kaist_Assignment2"))
+            startActivity(intent)
+        }
 
         tvProfileName.text = userName
         tvProfileId.text = userId

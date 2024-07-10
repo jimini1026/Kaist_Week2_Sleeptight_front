@@ -82,9 +82,9 @@ class MainActivity : AppCompatActivity() {
 //                    tab.setIcon(R.drawable.ic_history) // 세 번째 탭에 아이콘 설정
                 }
 //
-                3 -> {
-                    tab.view.visibility = View.GONE // Hide the Profile tab
-                }
+//                3 -> {
+//                    tab.view.visibility = View.GONE // Hide the Profile tab
+//                }
             }
         }.attach()
 
@@ -92,14 +92,24 @@ class MainActivity : AppCompatActivity() {
         val profileFragment = ProfileFragment.newInstance(userName, userId)
         supportFragmentManager.beginTransaction().replace(R.id.drawer_profile, profileFragment).commit()
 
-        // Open drawer when swiping left on the History tab
         viewPager.registerOnPageChangeCallback(object : ViewPager2.OnPageChangeCallback() {
+            private var previousPosition = -1
+
             override fun onPageSelected(position: Int) {
                 super.onPageSelected(position)
                 if (position == 2) {
-                    drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED, GravityCompat.END)
-                } else {
                     drawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED, GravityCompat.END)
+                    drawerLayout.closeDrawer(GravityCompat.END)
+                }
+                previousPosition = position
+            }
+
+            override fun onPageScrolled(position: Int, positionOffset: Float, positionOffsetPixels: Int) {
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels)
+                // 이전 탭이 history 탭이고 현재 탭이 history 탭이며 positionOffset이 0.0이고 positionOffsetPixels이 0일 때만 drawer를 염
+                if (previousPosition == 2 && position == 2 && positionOffset == 0.0f && positionOffsetPixels == 0) {
+                    // History 탭에서 오른쪽으로 스와이프할 때 드로어 열기
+                    drawerLayout.openDrawer(GravityCompat.END)
                 }
             }
         })
@@ -109,7 +119,7 @@ class MainActivity : AppCompatActivity() {
         FragmentStateAdapter(activity) {
 
         override fun getItemCount(): Int {
-            return 4
+            return 3
         }
 
         override fun createFragment(position: Int): Fragment {
@@ -117,7 +127,7 @@ class MainActivity : AppCompatActivity() {
                 0 -> UserFragment.newInstance(userName, userId)
                 1 -> MusicFragment.newInstance(userName, userId)
                 2 -> CalendarFragment.newInstance(userName, userId)
-                3 -> ProfileFragment.newInstance(userName, userId)
+//                3 -> ProfileFragment.newInstance(userName, userId)
                 else -> throw IllegalStateException("Unexpected position $position")
             }
         }

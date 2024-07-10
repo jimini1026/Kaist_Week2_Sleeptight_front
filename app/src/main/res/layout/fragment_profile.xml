@@ -6,11 +6,21 @@
     android:background="#121212"
     android:padding="16dp">
 
+    <ImageView
+        android:id="@+id/image_profile"
+        android:layout_width="120dp"
+        android:layout_height="120dp"
+        android:layout_gravity="center_horizontal"
+        android:src="@drawable/ic_profile_clickme_image"
+        android:contentDescription="Profile Image"
+        android:clickable="true"
+        android:focusable="true" />
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
+        android:layout_marginTop="16dp"
         android:text="Profile"
         android:textColor="@color/white"
         android:textSize="30sp"
@@ -79,6 +89,7 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_marginTop="8dp"
-        android:gravity="center_horizontal" />
+        android:gravity="center"
+        android:layout_gravity="center_vertical"/>
 
 </LinearLayout>
