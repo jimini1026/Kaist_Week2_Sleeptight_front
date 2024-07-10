@@ -45,9 +45,6 @@ class AlarmActivity : AppCompatActivity() {
 
     fun onWakeUpClicked(view: android.view.View) {
         if (wakeHour != -1 && wakeMinute != -1) {
-            val wakeTime = String.format("%02d:%02d", wakeHour, wakeMinute)
-            Toast.makeText(this, "SleepTime: $sleepTime Selected Time: $wakeTime", Toast.LENGTH_LONG).show()
-
             // Insert the sleep data into the database
             insertSleepData()
         } else {
@@ -80,7 +77,6 @@ class AlarmActivity : AppCompatActivity() {
             realWakeTime = realWakeTimeFormatted
         )
 
-        Toast.makeText(this@AlarmActivity, "user_id = $userId", Toast.LENGTH_SHORT).show()
 
         val apiService = RetrofitClient.apiService
 
@@ -88,9 +84,8 @@ class AlarmActivity : AppCompatActivity() {
         apiService.postSleepData(sleepData).enqueue(object : Callback<Void> {
             override fun onResponse(call: Call<Void>, response: Response<Void>) {
                 if (response.isSuccessful) {
-                    Toast.makeText(this@AlarmActivity, "Sleep data inserted successfully", Toast.LENGTH_SHORT).show()
                 } else {
-                    Toast.makeText(this@AlarmActivity, "Failed to insert sleep data od $userId", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this@AlarmActivity, "Failed to insert sleep data of $userId", Toast.LENGTH_SHORT).show()
                     Log.e("PostSleepData", "Failed to insert sleep data: ${response.code()} ${response.message()}")
                 }
                 returnToMainActivity()
@@ -112,7 +107,6 @@ class AlarmActivity : AppCompatActivity() {
     }
 
     fun onSleepFiveMoreClicked(view: android.view.View) {
-        Toast.makeText(this, "5분만 더 잘래요 버튼 클릭", Toast.LENGTH_SHORT).show()
 
         // 현재 시간에 5분을 더하고 selectedHour와 selectedMinute 변수 업데이트
         val calendar = Calendar.getInstance()

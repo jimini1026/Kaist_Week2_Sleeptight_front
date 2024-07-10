@@ -190,7 +190,7 @@ class UserFragment : Fragment() {
             setAlarm(requireContext(), sleepTime, alarmHour, alarmMinute, selectedHour, selectedMinute)
 
             // 사용자에게 선택된 시간 알림
-            Toast.makeText(requireContext(), "SleepTime : $sleepTime Selected Time: $selectedTime", Toast.LENGTH_SHORT).show()
+            Toast.makeText(requireContext(), "Alarm Set On $selectedTime", Toast.LENGTH_SHORT).show()
         }
     }
 

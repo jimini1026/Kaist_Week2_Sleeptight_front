@@ -26,9 +26,7 @@ class InternalLoginActivity : AppCompatActivity() {
             val userId = userIdEditText.text.toString()
             val userName = userNameEditText.text.toString()
 
-            // Toast 메시지로 userId와 userName 출력
-            val toastMessage = "User ID: $userId User Name: $userName"
-            Toast.makeText(this@InternalLoginActivity, toastMessage, Toast.LENGTH_SHORT).show()
+
 
             // 여기서 userId와 userName을 사용하여 로그인 처리를 수행합니다.
             // 예를 들어, 로그인이 성공했다고 가정하고 MainActivity로 데이터를 전달합니다.

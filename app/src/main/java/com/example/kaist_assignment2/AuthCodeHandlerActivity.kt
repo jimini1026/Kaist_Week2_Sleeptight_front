@@ -25,7 +25,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                 if (error != null) {
                     Log.e(TAG, "사용자 정보 요청 실패", error)
                 } else if (user != null) {
-                    val userId = user.id.toString()
+                    val userId = "kakao_" + user.id.toString()
                     val userName = user.kakaoAccount?.profile?.nickname
 
                     // MainActivity로 전환
@@ -70,7 +70,7 @@ class AuthCodeHandlerActivity : AppCompatActivity() {
                         if (error != null) {
                             Log.e(TAG, "사용자 정보 요청 실패", error)
                         } else if (user != null) {
-                            val userId = user.id.toString()
+                            val userId = "kakao_" + user.id.toString()
                             val userName = user.kakaoAccount?.profile?.nickname
 
 

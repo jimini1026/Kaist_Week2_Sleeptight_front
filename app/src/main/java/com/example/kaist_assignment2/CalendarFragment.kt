@@ -67,7 +67,6 @@ class CalendarFragment : Fragment() {
 
         val userName = arguments?.getString(ARG_USER_NAME)
         val userId = arguments?.getString(ARG_USER_ID)
-        Toast.makeText(context, "Username: $userName, UserID: $userId", Toast.LENGTH_LONG).show()
 
         // 데코레이터 추가
         val defaultDecorator = DefaultDecorator()
@@ -96,8 +95,6 @@ class CalendarFragment : Fragment() {
                                 val sleepTime = extractTimeFromDateTime(sleepData.sleepTime)
                                 val predWakeTime = extractTimeFromDateTime(sleepData.predWakeTime)
                                 val realWakeTime = extractTimeFromDateTime(sleepData.realWakeTime)
-                                // 예: Toast로 확인
-                                Toast.makeText(context, "Sleep Time: $sleepTime, Predicted Wake Time: $predWakeTime, Real Wake Time: $realWakeTime", Toast.LENGTH_LONG).show()
 
                                 // DialogFragment를 띄웁니다.
                                 val info = "Slept At $sleepTime\nSet Alarm At $predWakeTime\nWoke Up At $realWakeTime" // 실제 정보로 대체하세요.
@@ -369,9 +366,6 @@ class CalendarFragment : Fragment() {
         for (sleepData in sleepDataList) {
             val sleepTime = dateFormat.parse(sleepData.sleepTime)?.time ?: 0
             val realWakeTime = dateFormat.parse(sleepData.realWakeTime)?.time ?: 0
-
-            val sleepTimeStr = sleepTime.toString()
-            Toast.makeText(requireContext(), " $sleepTimeStr", Toast.LENGTH_SHORT).show()
 
             val sleepDuration = realWakeTime - sleepTime
             totalSleepTimeMillis += sleepDuration
