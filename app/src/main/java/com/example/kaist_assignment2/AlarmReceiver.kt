@@ -6,6 +6,7 @@ import android.app.PendingIntent
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 
@@ -28,7 +29,12 @@ class AlarmReceiver : BroadcastReceiver() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val channelId = "alarm_channel"
             val channelName = "Alarm Channel"
-            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH)
+            val channel = NotificationChannel(channelId, channelName, NotificationManager.IMPORTANCE_HIGH).apply {
+                setSound(
+                    Uri.parse("android.resource://${context.packageName}/raw/custom_alarm_sound"),
+                    null
+                )
+            }
             notificationManager.createNotificationChannel(channel)
         }
 
@@ -48,6 +54,9 @@ class AlarmReceiver : BroadcastReceiver() {
             PendingIntent.FLAG_IMMUTABLE or PendingIntent.FLAG_UPDATE_CURRENT // FLAG_IMMUTABLE 추가
         )
 
+        // 사용자 지정 알람 사운드 설정
+        val alarmSound: Uri = Uri.parse("android.resource://${context.packageName}/raw/custom_alarm_sound")
+
         // Notification Builder 생성
         val notificationBuilder = NotificationCompat.Builder(context, "alarm_channel")
             .setSmallIcon(R.mipmap.ic_launcher)
@@ -55,6 +64,7 @@ class AlarmReceiver : BroadcastReceiver() {
             .setContentText(message)
             .setPriority(NotificationCompat.PRIORITY_HIGH)
             .setAutoCancel(true)
+            .setSound(alarmSound)
             .setContentIntent(pendingIntent)
 
         // Notification 표시
